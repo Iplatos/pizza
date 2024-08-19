@@ -7,7 +7,7 @@ import pizzas from './assets/pizzas.json'
 import { useEffect, useState } from 'react'
 import { PizzaBlock, PizzaPropsType } from './components/pizzabBlock'
 import { Skeleton } from './components/pizzabBlock/skeleton'
-//v 4 ; 49
+//v 7 ; 28
 
 function App() {
   const [modalSortOpen, setModalSortOpen] = useState(false)
@@ -54,7 +54,7 @@ function App() {
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
             {isLoading
-              ? [...new Array(6)].map(() => <Skeleton />)
+              ? [...new Array(8)].map(() => <Skeleton />)
               : pizzasArray.map((p, i) => <PizzaBlock key={p.id} {...p} />)}
           </div>{' '}
         </div>
