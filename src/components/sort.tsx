@@ -1,4 +1,14 @@
-export const Sort = () => {
+import { useState } from 'react'
+
+type SortProps = {
+  modalSortOpen: boolean
+  setModalSortOpen: (modalSortOpen: boolean) => void
+}
+
+export const Sort = (props: SortProps) => {
+  const { modalSortOpen, setModalSortOpen } = props
+  const sorts = ['популярности', 'цене', 'алфавиту']
+  const [sortIndex, setSortIndex] = useState(0)
   return (
     <div className="sort">
       <div className="sort__label">
@@ -15,15 +25,25 @@ export const Sort = () => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span>популярности</span>
+        <span onClick={() => setModalSortOpen(!modalSortOpen)}>{sorts[sortIndex]}</span>
       </div>
-      <div className="sort__popup">
-        <ul>
-          <li className="active">популярности</li>
-          <li>цене</li>
-          <li>алфавиту</li>
-        </ul>
-      </div>
+      {modalSortOpen ? (
+        <div className="sort__popup">
+          <ul>
+            {sorts.map((s, i) => (
+              <li
+                onClick={() => setSortIndex(i)}
+                className={i === sortIndex ? 'active' : ''}
+                key={s}
+              >
+                {s}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   )
 }
