@@ -23,6 +23,8 @@ export const Home = ({
   const [categoryIndex, setCategoryIndex] = useState(0)
   const [sortIndex, setSortIndex] = useState<SortType>('rating')
   const [pizzasArray, setPizzasArray] = useState<PizzaPropsType[]>([])
+  const [isAsc, setIsAsc] = useState(true)
+  console.log(isAsc)
 
   const getPizzas = async () => {
     setIsLoading(true)
@@ -37,20 +39,23 @@ export const Home = ({
     }
   }
 
-  const getSortedPizza = async (categoryIndex: number, sortIndex: SortType) => {
+  const getSortedPizza = async (categoryIndex: number, sortIndex: SortType, isAsc: boolean) => {
     setIsLoading(true)
     try {
+      const res = (await getPizzasFromDB()) as PizzaPropsType[]
+      let sortedPizzas = res
+
       if (categoryIndex) {
-        const res = (await getPizzasFromDB()) as PizzaPropsType[]
-        const sortedPizzas = res
-          .filter((p) => p.category === categoryIndex)
-          .sort((a, b) => (a[sortIndex] > b[sortIndex] ? 1 : -1))
-        setPizzasArray(sortedPizzas)
-      } else {
-        const res = (await getPizzasFromDB()) as PizzaPropsType[]
-        const sortedPizzas = [...res].sort((a, b) => (a[sortIndex] > b[sortIndex] ? 1 : -1))
-        setPizzasArray(sortedPizzas)
+        sortedPizzas = sortedPizzas.filter((p) => p.category === categoryIndex)
       }
+
+      sortedPizzas = sortedPizzas.sort((a, b) => (a[sortIndex] > b[sortIndex] ? 1 : -1))
+
+      if (!isAsc) {
+        sortedPizzas.reverse()
+      }
+
+      setPizzasArray(sortedPizzas)
     } catch {
       console.log('error')
     } finally {
@@ -67,14 +72,16 @@ export const Home = ({
   }
 
   useEffect(() => {
-    getSortedPizza(categoryIndex, sortIndex)
-  }, [categoryIndex, sortIndex])
+    getSortedPizza(categoryIndex, sortIndex, isAsc)
+  }, [categoryIndex, sortIndex, isAsc])
 
   return (
     <div className="container">
       <div className="content__top">
         <Categories categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex} />
         <Sort
+          isAsc={isAsc}
+          setIsAsc={setIsAsc}
           sortIndex={sortIndex}
           setSortIndex={setSortIndex}
           modalSortOpen={modalSortOpen}
