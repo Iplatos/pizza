@@ -1,7 +1,12 @@
 import { useState, memo } from 'react'
 
-export const Categories = memo(() => {
-  const [activeIndex, setActiveIndex] = useState(0)
+type CategoriesType = {
+  categoryIndex: number
+  setCategoryIndex: (index: number) => void
+}
+
+export const Categories = memo((props: CategoriesType) => {
+  const { categoryIndex, setCategoryIndex } = props
   const categories = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
   return (
     <div className="categories">
@@ -9,8 +14,8 @@ export const Categories = memo(() => {
         {categories.map((c, i) => (
           <li
             key={c}
-            className={activeIndex === i ? 'active' : ''}
-            onClick={() => setActiveIndex(i)}
+            className={categoryIndex === i ? 'active' : ''}
+            onClick={() => setCategoryIndex(i)}
           >
             {c}
           </li>

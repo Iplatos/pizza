@@ -1,18 +1,24 @@
 import { useState } from 'react'
+import { SortType } from '../pages/home'
 
 type SortProps = {
   modalSortOpen: boolean
   setModalSortOpen: (modalSortOpen: boolean) => void
+  sortIndex: SortType
+  setSortIndex: (title: SortType) => void
+  isAsc: boolean
+  setIsAsc: (isAsc: boolean) => void
 }
 
 export const Sort = (props: SortProps) => {
-  const { modalSortOpen, setModalSortOpen } = props
-  const sorts = ['популярности', 'цене', 'алфавиту']
-  const [sortIndex, setSortIndex] = useState(0)
+  const { modalSortOpen, setModalSortOpen, sortIndex, setSortIndex, isAsc, setIsAsc } = props
+  const sorts = { rating: 'популярности', price: 'цене', title: 'алфавиту' }
+
   return (
     <div className="sort">
-      <div className="sort__label">
+      <div onClick={() => setIsAsc(!isAsc)} className="sort__label">
         <svg
+          style={{ transform: isAsc ? 'rotate(180deg)' : 'none' }}
           width="10"
           height="6"
           viewBox="0 0 10 6"
@@ -30,10 +36,13 @@ export const Sort = (props: SortProps) => {
       {modalSortOpen ? (
         <div className="sort__popup">
           <ul>
-            {sorts.map((s, i) => (
+            {Object.values(sorts).map((s, i) => (
               <li
-                onClick={() => setSortIndex(i)}
-                className={i === sortIndex ? 'active' : ''}
+                onClick={() => {
+                  const sortKey = Object.keys(sorts)[i] as SortType
+                  setSortIndex(sortKey)
+                }}
+                className={Object.keys(sorts)[i] === sortIndex ? 'active' : ''}
                 key={s}
               >
                 {s}
