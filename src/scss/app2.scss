@@ -92,7 +92,7 @@ a {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  @media (max-width: 450px) {
+  @media (max-width: 900px) {
     display: flex;
     flex-direction: column;
   }
@@ -263,6 +263,11 @@ a {
     display: flex;
     flex-direction: column;
   }
+}
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .categories ul li {
   background-color: #f9f9f9;
