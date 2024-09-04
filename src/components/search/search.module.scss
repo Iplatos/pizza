@@ -1,0 +1,33 @@
+.inputContainer {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 40%;
+  padding: 0;
+  @media (max-width: 650px) {
+    width: 60%;
+  }
+}
+
+.root {
+  margin: 1em 0 1em 0;
+  border: 3px solid sandybrown;
+  border-radius: 10px;
+  padding: 5px 5px 5px 5px;
+  font-size: 16px;
+  width: 100%;
+  padding-left: 30px;
+  &:focus {
+    border: 3px solid black;
+  }
+}
+.searchSVG {
+  position: absolute;
+  left: 12px;
+  bottom: 25px;
+}
+.clearSVG {
+  position: absolute;
+  right: 12px;
+  bottom: 27px;
+}
