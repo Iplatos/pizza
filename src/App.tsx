@@ -7,7 +7,10 @@ import { Route, Routes } from 'react-router-dom'
 import { NotFound } from './pages/notFoung'
 import { Cart } from './pages/cart'
 import React from 'react'
-//v 11
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from './store/store'
+import { isModalSortOpen } from './store/appSlice'
+//v 16
 
 export const SearchContext = createContext<{
   searchValue: string
@@ -17,13 +20,14 @@ export const SearchContext = createContext<{
   setSearchValue: () => {},
 })
 function App() {
-  const [modalSortOpen, setModalSortOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const modalSortOpen = useSelector((state: RootState) => state.AppReducer.modalSortOpen)
+
   const [searchValue, setSearchValue] = useState<string>('')
+  const dispatch = useDispatch()
 
   const modalClose = () => {
     if (modalSortOpen) {
-      setModalSortOpen(false)
+      dispatch(isModalSortOpen(false))
     }
   }
 
@@ -32,20 +36,11 @@ function App() {
       <div onClick={modalClose} className="wrapper">
         <SearchContext.Provider value={{ searchValue, setSearchValue }}>
           <Header />
+
           <div className="content">
             <Routes>
               {' '}
-              <Route
-                path="/"
-                element={
-                  <Home
-                    setIsLoading={setIsLoading}
-                    modalSortOpen={modalSortOpen}
-                    setModalSortOpen={setModalSortOpen}
-                    isLoading={isLoading}
-                  />
-                }
-              />
+              <Route path="/" element={<Home />} />
               <Route path={'/cart'} element={<Cart />} />
               <Route path="/*" element={<NotFound />} />
             </Routes>
