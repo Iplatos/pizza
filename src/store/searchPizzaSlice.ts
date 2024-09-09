@@ -27,10 +27,16 @@ export const searchPizzaSlice = createSlice({
     ascOrDescSwitcher: (state, action: PayloadAction<boolean>) => {
       state.isAsc = action.payload
     },
+    setFilters: (state, action: PayloadAction<AppParams>) => {
+      state.categoryIndex = action.payload.categoryIndex
+      state.isAsc = action.payload.isAsc
+      state.sortIndex = action.payload.sortIndex
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { ascOrDescSwitcher, changeCategoryIndex, changeSortIndex } = searchPizzaSlice.actions
+export const { ascOrDescSwitcher, changeCategoryIndex, changeSortIndex, setFilters } =
+  searchPizzaSlice.actions
 
 export default searchPizzaSlice.reducer

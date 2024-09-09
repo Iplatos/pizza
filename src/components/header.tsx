@@ -1,15 +1,11 @@
-import { memo } from 'react'
 import pizzaLogo from '../assets/img/pizza-logo.svg'
 import '../../src/scss/app2.scss'
 import { Link, useNavigate } from 'react-router-dom'
 import { Search } from './search'
 
-type PropsType = {
-  searchValue: string
-  setSearchValue: (searchValue: string) => void
-}
-export const Header = memo((props: PropsType) => {
+export const Header = () => {
   const navigate = useNavigate()
+
   const onHeaderClick = () => {
     navigate('/')
   }
@@ -18,14 +14,12 @@ export const Header = memo((props: PropsType) => {
       <div className="container">
         <div className="header__logo">
           <img width="38" src={pizzaLogo} alt="Pizza logo" />
-
           <div style={{ cursor: 'pointer' }} onClick={onHeaderClick}>
             <h1>MEGA-King Pizza </h1>
             <p>крупнейшая сеть пиццерий.</p>
           </div>
         </div>
-        <Search {...props} />
-
+        <Search />
         <div className="buttonContainer">
           <Link to="/cart" className="button button--cart">
             <span>520 ₽</span>
@@ -65,4 +59,4 @@ export const Header = memo((props: PropsType) => {
       </div>
     </div>
   )
-})
+}
