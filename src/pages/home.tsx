@@ -3,31 +3,28 @@ import { PizzaBlock, PizzaPropsType } from '../components/pizzaBlock'
 import { Skeleton } from '../components/pizzaBlock/skeleton'
 import { Sort } from '../components/sort'
 import '../../src/scss/app2.scss'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import pizzas from '../assets/pizzas.json'
+import { resolve } from 'path'
+import { SearchContext } from '../App'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../store/store'
+import { isAppLoaderSwitcher } from '../store/appSlice'
+import qs from 'qs'
+import { Navigate, useNavigate } from 'react-router-dom'
 
-type HomeProps = {
-  modalSortOpen: boolean
-  setModalSortOpen: (modalSortOpen: boolean) => void
-  isLoading: boolean
-  setIsLoading: (isLoading: boolean) => void
-}
 export type SortType = 'rating' | 'price' | 'title'
-export const Home = ({
-  modalSortOpen,
-  setIsLoading,
-  isLoading,
-
-  setModalSortOpen,
-}: HomeProps) => {
-  const [categoryIndex, setCategoryIndex] = useState(0)
-  const [sortIndex, setSortIndex] = useState<SortType>('rating')
+export const Home = () => {
+  const { categoryIndex, isAsc, sortIndex } = useSelector(
+    (state: RootState) => state.searchPizzaReducer
+  )
   const [pizzasArray, setPizzasArray] = useState<PizzaPropsType[]>([])
-  const [isAsc, setIsAsc] = useState(true)
-  console.log(isAsc)
-
+  const navigate = useNavigate()
+  const { searchValue } = useContext(SearchContext)
+  const isLoading = useSelector((state: RootState) => state.AppReducer.isLoading)
+  const dispatch = useDispatch()
   const getPizzas = async () => {
-    setIsLoading(true)
+    dispatch(isAppLoaderSwitcher(true))
     try {
       const res = (await getPizzasFromDB()) as PizzaPropsType[]
       const pizzasInit = [...res].sort((a, b) => a.rating - b.rating)
@@ -35,12 +32,17 @@ export const Home = ({
     } catch {
       console.log('error')
     } finally {
-      setIsLoading(false)
+      dispatch(isAppLoaderSwitcher(false))
     }
   }
 
-  const getSortedPizza = async (categoryIndex: number, sortIndex: SortType, isAsc: boolean) => {
-    setIsLoading(true)
+  const getSortedPizza = async (
+    pizzaName: string,
+    categoryIndex: number,
+    sortIndex: SortType,
+    isAsc: boolean
+  ) => {
+    dispatch(isAppLoaderSwitcher(true))
     try {
       const res = (await getPizzasFromDB()) as PizzaPropsType[]
       let sortedPizzas = res
@@ -48,7 +50,11 @@ export const Home = ({
       if (categoryIndex) {
         sortedPizzas = sortedPizzas.filter((p) => p.category === categoryIndex)
       }
-
+      if (pizzaName) {
+        sortedPizzas = sortedPizzas.filter((p) =>
+          p.title.toLowerCase().includes(pizzaName.toLowerCase())
+        )
+      }
       sortedPizzas = sortedPizzas.sort((a, b) => (a[sortIndex] > b[sortIndex] ? 1 : -1))
 
       if (!isAsc) {
@@ -59,10 +65,25 @@ export const Home = ({
     } catch {
       console.log('error')
     } finally {
-      setIsLoading(false)
+      dispatch(isAppLoaderSwitcher(false))
     }
   }
+  const findPizza = async (pizzaName: string) => {
+    try {
+      dispatch(isAppLoaderSwitcher(true))
 
+      const res = (await getPizzasFromDB()) as PizzaPropsType[]
+
+      const filteredByNamePizzas = res.filter((p) =>
+        p.title.toLowerCase().includes(pizzaName.toLowerCase())
+      )
+      setPizzasArray(filteredByNamePizzas)
+    } catch (e) {
+      console.log('some error sort by name pizzas')
+    } finally {
+      dispatch(isAppLoaderSwitcher(false))
+    }
+  }
   const getPizzasFromDB = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -72,21 +93,21 @@ export const Home = ({
   }
 
   useEffect(() => {
-    getSortedPizza(categoryIndex, sortIndex, isAsc)
-  }, [categoryIndex, sortIndex, isAsc])
+    const queryString = qs.stringify({
+      category: categoryIndex,
+      sortBy: sortIndex,
+      Asc: isAsc,
+      search: searchValue,
+    })
+    navigate(`?${queryString}`)
+    getSortedPizza(searchValue, categoryIndex, sortIndex, isAsc)
+  }, [categoryIndex, sortIndex, isAsc, searchValue])
 
   return (
     <div className="container">
       <div className="content__top">
-        <Categories categoryIndex={categoryIndex} setCategoryIndex={setCategoryIndex} />
-        <Sort
-          isAsc={isAsc}
-          setIsAsc={setIsAsc}
-          sortIndex={sortIndex}
-          setSortIndex={setSortIndex}
-          modalSortOpen={modalSortOpen}
-          setModalSortOpen={setModalSortOpen}
-        />
+        <Categories categoryIndex={categoryIndex} />
+        <Sort isAsc={isAsc} sortIndex={sortIndex} />
         <h2 className="content__title">Все пиццы</h2>
         <div className="content__items">
           {isLoading
