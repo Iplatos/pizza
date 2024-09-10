@@ -5,13 +5,12 @@ import { Sort } from '../components/sort'
 import '../../src/scss/app2.scss'
 import { useContext, useEffect, useState } from 'react'
 import pizzas from '../assets/pizzas.json'
-import { resolve } from 'path'
 import { SearchContext } from '../App'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store/store'
 import { isAppLoaderSwitcher } from '../store/appSlice'
 import qs from 'qs'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export type SortType = 'rating' | 'price' | 'title'
 export const Home = () => {
@@ -23,18 +22,18 @@ export const Home = () => {
   const { searchValue } = useContext(SearchContext)
   const isLoading = useSelector((state: RootState) => state.AppReducer.isLoading)
   const dispatch = useDispatch()
-  const getPizzas = async () => {
-    dispatch(isAppLoaderSwitcher(true))
-    try {
-      const res = (await getPizzasFromDB()) as PizzaPropsType[]
-      const pizzasInit = [...res].sort((a, b) => a.rating - b.rating)
-      setPizzasArray(pizzasInit)
-    } catch {
-      console.log('error')
-    } finally {
-      dispatch(isAppLoaderSwitcher(false))
-    }
-  }
+  // const getPizzas = async () => {
+  //   dispatch(isAppLoaderSwitcher(true))
+  //   try {
+  //     const res = (await getPizzasFromDB()) as PizzaPropsType[]
+  //     const pizzasInit = [...res].sort((a, b) => a.rating - b.rating)
+  //     setPizzasArray(pizzasInit)
+  //   } catch {
+  //     console.log('error')
+  //   } finally {
+  //     dispatch(isAppLoaderSwitcher(false))
+  //   }
+  // }
 
   const getSortedPizza = async (
     pizzaName: string,
@@ -68,22 +67,22 @@ export const Home = () => {
       dispatch(isAppLoaderSwitcher(false))
     }
   }
-  const findPizza = async (pizzaName: string) => {
-    try {
-      dispatch(isAppLoaderSwitcher(true))
+  // const findPizza = async (pizzaName: string) => {
+  //   try {
+  //     dispatch(isAppLoaderSwitcher(true))
 
-      const res = (await getPizzasFromDB()) as PizzaPropsType[]
+  //     const res = (await getPizzasFromDB()) as PizzaPropsType[]
 
-      const filteredByNamePizzas = res.filter((p) =>
-        p.title.toLowerCase().includes(pizzaName.toLowerCase())
-      )
-      setPizzasArray(filteredByNamePizzas)
-    } catch (e) {
-      console.log('some error sort by name pizzas')
-    } finally {
-      dispatch(isAppLoaderSwitcher(false))
-    }
-  }
+  //     const filteredByNamePizzas = res.filter((p) =>
+  //       p.title.toLowerCase().includes(pizzaName.toLowerCase())
+  //     )
+  //     setPizzasArray(filteredByNamePizzas)
+  //   } catch (e) {
+  //     console.log('some error sort by name pizzas')
+  //   } finally {
+  //     dispatch(isAppLoaderSwitcher(false))
+  //   }
+  // }
   const getPizzasFromDB = () => {
     return new Promise((resolve) => {
       setTimeout(() => {

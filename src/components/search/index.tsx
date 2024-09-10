@@ -1,28 +1,39 @@
-import { useContext } from 'react'
+import { useState, useContext, useEffect, useRef } from 'react'
 import s from './search.module.scss'
 import { SearchContext } from '../../App'
-type PropsType = {
-  searchValue: string
-  setSearchValue: (searchValue: string) => void
-}
+import useDebounce from '../../hooks/hooks'
+
 export const Search = () => {
   const { searchValue, setSearchValue } = useContext(SearchContext)
-  const findPizzaHandler = (e: any) => {
-    setSearchValue(e.currentTarget.value)
+  const [inputValue, setInputValue] = useState(searchValue)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const debouncedSearchValue = useDebounce(inputValue, 700)
+
+  useEffect(() => {
+    setSearchValue(debouncedSearchValue)
+  }, [debouncedSearchValue, setSearchValue])
+
+  const findPizzaHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.currentTarget.value)
   }
 
   return (
     <div className={s.inputContainer}>
       <input
+        ref={inputRef}
         className={s.root}
         onChange={findPizzaHandler}
-        value={searchValue}
+        value={inputValue}
         type="text"
         placeholder="поиск"
       />
-      {searchValue && (
+      {inputValue && (
         <svg
-          onClick={() => setSearchValue('')}
+          onClick={() => {
+            setInputValue('')
+            inputRef.current && inputRef.current.focus()
+          }}
           className={s.clearSVG}
           width="14"
           height="14"
@@ -52,7 +63,7 @@ export const Search = () => {
           />
         </g>
         <defs>
-          <clipPath id="clip0_82614_862">
+          <clipPath id="clip0_82614_862)">
             <rect width="20" height="20" fill="white" />
           </clipPath>
         </defs>

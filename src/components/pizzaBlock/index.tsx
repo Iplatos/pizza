@@ -11,7 +11,7 @@ export type PizzaPropsType = {
   rating: number
 }
 export const PizzaBlock = memo((props: PizzaPropsType) => {
-  const { title, price, imageUrl, types, sizes, category, rating } = props
+  const { title, price, imageUrl, types, sizes } = props
   const [activeSize, setActiveSize] = useState(0)
   const [activeType, setActiveType] = useState(0)
   const pizzasTypes = ['тонкое', 'традиционное']

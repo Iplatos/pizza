@@ -1,12 +1,13 @@
-import { useState, memo } from 'react'
+import { useDispatch } from 'react-redux'
+import { changeCategoryIndex } from '../store/searchPizzaSlice'
 
 type CategoriesType = {
   categoryIndex: number
-  setCategoryIndex: (index: number) => void
 }
 
-export const Categories = memo((props: CategoriesType) => {
-  const { categoryIndex, setCategoryIndex } = props
+export const Categories = (props: CategoriesType) => {
+  const { categoryIndex } = props
+  const dispatch = useDispatch()
   const categories = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
   return (
     <div className="categories">
@@ -15,7 +16,7 @@ export const Categories = memo((props: CategoriesType) => {
           <li
             key={c}
             className={categoryIndex === i ? 'active' : ''}
-            onClick={() => setCategoryIndex(i)}
+            onClick={() => dispatch(changeCategoryIndex(i))}
           >
             {c}
           </li>
@@ -23,4 +24,4 @@ export const Categories = memo((props: CategoriesType) => {
       </ul>
     </div>
   )
-})
+}

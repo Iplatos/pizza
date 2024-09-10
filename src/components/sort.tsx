@@ -1,22 +1,22 @@
-import { useState } from 'react'
 import { SortType } from '../pages/home'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../store/store'
+import { ascOrDescSwitcher, changeSortIndex } from '../store/searchPizzaSlice'
+import { isModalSortOpen } from '../store/appSlice'
 
 type SortProps = {
-  modalSortOpen: boolean
-  setModalSortOpen: (modalSortOpen: boolean) => void
   sortIndex: SortType
-  setSortIndex: (title: SortType) => void
   isAsc: boolean
-  setIsAsc: (isAsc: boolean) => void
 }
 
 export const Sort = (props: SortProps) => {
-  const { modalSortOpen, setModalSortOpen, sortIndex, setSortIndex, isAsc, setIsAsc } = props
+  const { sortIndex, isAsc } = props
+  const dispatch = useDispatch()
   const sorts = { rating: 'популярности', price: 'цене', title: 'алфавиту' }
-
+  const modalSortOpen = useSelector((state: RootState) => state.AppReducer.modalSortOpen)
   return (
     <div className="sort">
-      <div onClick={() => setIsAsc(!isAsc)} className="sort__label">
+      <div onClick={() => dispatch(ascOrDescSwitcher(!isAsc))} className="sort__label">
         <svg
           style={{ transform: isAsc ? 'rotate(180deg)' : 'none' }}
           width="10"
@@ -31,7 +31,7 @@ export const Sort = (props: SortProps) => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setModalSortOpen(!modalSortOpen)}>{sorts[sortIndex]}</span>
+        <span onClick={() => dispatch(isModalSortOpen(!modalSortOpen))}>{sorts[sortIndex]}</span>
       </div>
       {modalSortOpen ? (
         <div className="sort__popup">
@@ -40,7 +40,7 @@ export const Sort = (props: SortProps) => {
               <li
                 onClick={() => {
                   const sortKey = Object.keys(sorts)[i] as SortType
-                  setSortIndex(sortKey)
+                  dispatch(changeSortIndex(sortKey))
                 }}
                 className={Object.keys(sorts)[i] === sortIndex ? 'active' : ''}
                 key={s}
